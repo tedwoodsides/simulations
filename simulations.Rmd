@@ -1,0 +1,75 @@
+---
+title: "Median, Quartile, and Regression Simulations"
+author: "Ted Woodsides"
+date: "11/9/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+#median
+median = function(x){
+  x = sort(x)
+  length = length(x)
+  if ((length%%2) == 0){
+    y1 = x[(length/2)]
+    y2 = x[(length/2)+1]
+    return((y1+y2)/2)
+  }
+  else{
+    y = x[(length+1)/2]
+    return(y)
+  }
+}
+```
+
+```{r}
+#quartile
+quartile = function(x){
+  # least to greatest
+  x = sort(x)
+  # length of data set
+  n = length(x)
+  # middle value
+  m=(n+1)/2
+  #data set is even
+  if (floor(m) != m){
+    # index of middle -1/2 to get number to left of middle
+    a = m-1/2
+    b = m+1/2
+    q1 = median(x[1:a])
+    q3 = median(x[b:n])
+  }
+  #data set is odd
+  else{
+    a = m-1
+    b = m+1
+    q1 = median(x[1:a])
+    q3 = median(x[b:n])
+  }
+c(q1=q1, q3=q3)
+}
+```
+
+```{r}
+#question 2
+#LSRL
+LSRL=function(x,y){
+  sxy = sum((y-mean(y))*(x-mean(x)))
+  sx2 = sum((x-mean(x))^2)
+  b = sxy/sx2
+  yint = mean(y)-(b*mean(x))
+  predict = yint+(b*(x))
+  ss = sum((y-predict)^2)
+  residuals = (y-predict)
+  null = 0
+  senum = sqrt(sum((y-predict)^2)/(length(y)-2))
+  g = mean(x)
+  sedenom = sqrt(sum((x-g)^2))
+  se = senum/sedenom
+  tstat = ((b-0)/se)
+  pvalue = 2*pt(-abs(tstat),df=length(x)-2)
+  c(intercept = yint, slope=b, SSError=ss, residuals=residuals, pvalue=pvalue)
+  return(pvalue)
+}
+```
